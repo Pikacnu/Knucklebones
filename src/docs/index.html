@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Documentation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    h1,
+    h2,
+    h3 {
+      color: #333;
+    }
+
+    pre {
+      background: #f4f4f4;
+      padding: 10px;
+      border: 1px solid #ddd;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>API Documentation</h1>
+
+  <h2>/api/login</h2>
+  <h3>POST</h3>
+  <p><strong>Description</strong>: User login</p>
+  <p><strong>Request Body</strong>:</p>
+  <pre><code>{
+    "name": "string",
+    "password": "string"
+}</code></pre>
+  <p><strong>Response</strong>:</p>
+  <ul>
+    <li>200: Login successful, sets session cookie</li>
+    <li>400: Bad request or already logged in</li>
+    <li>401: Unauthorized</li>
+    <li>404: Not found</li>
+  </ul>
+
+  <h2>/api/logout</h2>
+  <h3>POST</h3>
+  <p><strong>Description</strong>: User logout</p>
+  <p><strong>Response</strong>:</p>
+  <ul>
+    <li>200: Logout successful, clears session cookie</li>
+    <li>400: Not logged in</li>
+    <li>404: Not found</li>
+  </ul>
+
+  <h2>/api/user</h2>
+  <h3>GET</h3>
+  <p><strong>Description</strong>: Get user information</p>
+  <p><strong>Request Body</strong>:</p>
+  <pre><code>{
+    "name": "string",
+    "id": "number"
+}</code></pre>
+  <p><strong>Response</strong>:</p>
+  <ul>
+    <li>200: Returns user information</li>
+    <li>400: Bad request</li>
+    <li>404: Not found</li>
+  </ul>
+
+  <h3>POST</h3>
+  <p><strong>Description</strong>: Create new user</p>
+  <p><strong>Request Body</strong>:</p>
+  <pre><code>{
+    "name": "string",
+    "password": "string"
+}</code></pre>
+  <p><strong>Response</strong>:</p>
+  <ul>
+    <li>201: Created successfully</li>
+    <li>400: User already exists or bad request</li>
+  </ul>
+
+  <h3>PUT</h3>
+  <p><strong>Description</strong>: Update user password</p>
+  <p><strong>Request Body</strong>:</p>
+  <pre><code>{
+    "name": "string",
+    "password": "string"
+}</code></pre>
+  <p><strong>Response</strong>:</p>
+  <ul>
+    <li>200: Updated successfully</li>
+    <li>400: Bad request</li>
+    <li>401: Unauthorized</li>
+    <li>404: Not found</li>
+  </ul>
+
+  <h2>/api/token</h2>
+  <h3>POST</h3>
+  <p><strong>Description</strong>: Create new token</p>
+  <p><strong>Response</strong>:</p>
+  <ul>
+    <li>201: Created successfully, returns token</li>
+    <li>401: Unauthorized</li>
+    <li>404: Not found</li>
+  </ul>
+
+  <h2>/api/rooms</h2>
+  <h3>GET</h3>
+  <p><strong>Description</strong>: Get room information</p>
+  <p><strong>Request Body</strong>:</p>
+  <pre><code>{
+    "room_id": "number",
+    "game_id": "number"
+}</code></pre>
+  <p><strong>Response</strong>:</p>
+  <ul>
+    <li>200: Returns room information</li>
+    <li>400: Bad request</li>
+    <li>404: Not found</li>
+  </ul>
+
+  <h3>POST</h3>
+  <p><strong>Description</strong>: Create or join room</p>
+  <p><strong>Request Body</strong>:</p>
+  <pre><code>{
+    "player_id": "number",
+    "game_id": "number"
+}</code></pre>
+  <p><strong>Response</strong>:</p>
+  <ul>
+    <li>201: Created successfully</li>
+    <li>200: Joined successfully</li>
+    <li>400: Bad request or already in a room</li>
+    <li>401: Unauthorized</li>
+    <li>404: Not found</li>
+  </ul>
+
+  <h3>DELETE</h3>
+  <p><strong>Description</strong>: Delete room</p>
+  <p><strong>Request Body</strong>:</p>
+  <pre><code>{
+    "room_id": "number"
+}</code></pre>
+  <p><strong>Response</strong>:</p>
+  <ul>
+    <li>200: Deleted successfully</li>
+    <li>400: Bad request</li>
+    <li>401: Unauthorized</li>
+    <li>404: Not found</li>
+  </ul>
+
+  <h2>/api/games</h2>
+  <h3>GET</h3>
+  <p><strong>Description</strong>: Get game information</p>
+  <p><strong>Request Body</strong>:</p>
+  <pre><code>{
+    "game_id": "number"
+}</code></pre>
+  <p><strong>Response</strong>:</p>
+  <ul>
+    <li>200: Returns game information</li>
+    <li>400: Bad request</li>
+    <li>404: Not found</li>
+  </ul>
+
+  <h3>POST</h3>
+  <p><strong>Description</strong>: Create new game</p>
+  <p><strong>Response</strong>:</p>
+  <ul>
+    <li>201: Created successfully</li>
+    <li>401: Unauthorized</li>
+    <li>404: Not found</li>
+  </ul>
+
+  <h2>/api/move</h2>
+  <h3>POST</h3>
+  <p><strong>Description</strong>: Make a move in the game</p>
+  <p><strong>Request Body</strong>:</p>
+  <pre><code>{
+    "column": "number"
+}</code></pre>
+  <p><strong>Response</strong>:</p>
+  <ul>
+    <li>201: Move successful</li>
+    <li>400: Bad request or not your turn</li>
+    <li>401: Unauthorized</li>
+    <li>404: Not found</li>
+  </ul>
+</body>
+
+</html>
