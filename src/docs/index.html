@@ -57,7 +57,7 @@
   <h2>/api/user</h2>
   <h3>GET</h3>
   <p><strong>Description</strong>: Get user information</p>
-  <p><strong>Request Body</strong>:</p>
+  <p><strong>Request Parameters</strong>:</p>
   <pre><code>{
     "name": "string",
     "id": "number"
@@ -97,6 +97,15 @@
     <li>404: Not found</li>
   </ul>
 
+  <h3>DELETE</h3>
+  <p><strong>Description</strong>: Delete user</p>
+  <p><strong>Response</strong>:</p>
+  <ul>
+    <li>200: Deleted successfully</li>
+    <li>401: Unauthorized</li>
+    <li>404: Not found</li>
+  </ul>
+
   <h2>/api/token</h2>
   <h3>POST</h3>
   <p><strong>Description</strong>: Create new token</p>
@@ -104,7 +113,6 @@
   <ul>
     <li>201: Created successfully, returns token</li>
     <li>401: Unauthorized</li>
-    <li>404: Not found</li>
   </ul>
 
   <h2>/api/rooms</h2>
@@ -127,7 +135,7 @@
   <p><strong>Request Body</strong>:</p>
   <pre><code>{
     "player_id": "number",
-    "game_id": "number"
+    "room_id": "number"
 }</code></pre>
   <p><strong>Response</strong>:</p>
   <ul>
@@ -155,7 +163,7 @@
   <h2>/api/games</h2>
   <h3>GET</h3>
   <p><strong>Description</strong>: Get game information</p>
-  <p><strong>Request Body</strong>:</p>
+  <p><strong>Request Parameters</strong>:</p>
   <pre><code>{
     "game_id": "number"
 }</code></pre>
@@ -184,7 +192,7 @@
 }</code></pre>
   <p><strong>Response</strong>:</p>
   <ul>
-    <li>201: Move successful</li>
+    <li>200: Move successful</li>
     <li>400: Bad request or not your turn</li>
     <li>401: Unauthorized</li>
     <li>404: Not found</li>
