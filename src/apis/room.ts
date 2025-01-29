@@ -223,6 +223,70 @@ export async function RoomRoute(request: Request, server: Server) {
 				status: 201,
 			});
 		}
+		if (request.method === 'DELETE') {
+			const session = await verifySession(sessionKey);
+			if (!session) {
+				return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+					status: 401,
+				});
+			}
+			const room = db
+				.query('SELECT * FROM rooms WHERE player1 = ? OR player2 = ?')
+				.get(session.user_id, session.user_id) as Room;
+			if (!room) {
+				return new Response(JSON.stringify({ error: 'Not found' }), {
+					status: 404,
+				});
+			}
+			const game = db
+				.query('SELECT * FROM games WHERE room_id = ?')
+				.get(room.id) as Game;
+			if (!game) {
+				if (room.status === 'completed') {
+					return new Response(
+						JSON.stringify({ error: 'Game already completed' }),
+						{
+							status: 400,
+						},
+					);
+				}
+				if (room.status === 'waiting') {
+					if (room.player1 === session.user_id) {
+						db.query('DELETE FROM rooms WHERE id = ?').run(room.id);
+						return new Response(JSON.stringify({ message: 'Deleted' }), {
+							status: 200,
+						});
+					}
+					if (room.player2 === session.user_id) {
+						db.query('UPDATE rooms SET player2 = NULL WHERE id = ?').run(
+							room.id,
+						);
+						return new Response(JSON.stringify({ message: 'Deleted' }), {
+							status: 200,
+						});
+					}
+					return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+						status: 401,
+					});
+				}
+				return new Response(JSON.stringify({ error: 'Not found' }), {
+					status: 404,
+				});
+			}
+			if (game.winner) {
+				return new Response(
+					JSON.stringify({ error: 'Game already completed' }),
+					{
+						status: 400,
+					},
+				);
+			}
+			db.query('DELETE FROM games WHERE id = ?').run(game.id);
+			db.query('DELETE FROM rooms WHERE id = ?').run(room.id);
+			return new Response(JSON.stringify({ message: 'Deleted' }), {
+				status: 200,
+			});
+		}
 		return new Response(JSON.stringify({ error: 'Not found' }), {
 			status: 404,
 		});

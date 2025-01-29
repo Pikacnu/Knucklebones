@@ -176,3 +176,5 @@ dist
 
 # Database files
 *.sqlite
+*.splite-shm
+*.splite-wal

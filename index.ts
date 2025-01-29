@@ -8,6 +8,7 @@ import { AccountRoute } from './src/apis/accounts';
 import { RoomRoute } from './src/apis/room';
 import { TokenRoute } from './src/apis/token';
 import { db } from './src/utils/db';
+import { wsMove, wsRoom, wsToken } from './src/websocket';
 
 const port = 5173;
 
@@ -25,15 +26,6 @@ Bun.serve({
 			server.upgrade(request, {});
 			return;
 		}
-		/*
-		const cookies: Array<[string, string]> = request.headers
-			.get('Cookie')
-			?.split(';')
-			.map((cookie) => {
-				const parts = cookie.split('=');
-				return [parts[0], parts[1] || ''];
-			})!;
-			*/
 
 		if (url.pathname.startsWith('/api')) {
 			const response = await AccountRoute(request, server);
@@ -52,8 +44,67 @@ Bun.serve({
 		return new Response('Not found', { status: 404 });
 	},
 	websocket: {
-		async message(ws, message) {},
-		async open(ws) {},
+		async open(ws) {
+			ws.send(
+				JSON.stringify({
+					type: 'heartbeat',
+					data: {
+						delay: 1000 * 10,
+					},
+				}),
+			);
+		},
+		async message(ws, message) {
+			try {
+				const data = JSON.parse(message.toString()) as {
+					type: string;
+					action: string;
+					data: any;
+				};
+				if (data.type === 'heartbeat') {
+					ws.send(
+						JSON.stringify({
+							type: 'heartbeat',
+							data: {
+								delay: 1000 * 10,
+							},
+						}),
+					);
+				}
+				if (data.type === 'token') {
+					await wsToken(ws, data);
+					return;
+				}
+				if (data.type === 'room') {
+					await wsRoom(ws, data);
+					return;
+				}
+				if (data.type === 'move') {
+					await wsMove(ws, data);
+					return;
+				}
+				ws.send(
+					JSON.stringify({
+						type: data.data,
+						action: 'error',
+						data: {
+							message: "don't have this type or action",
+						},
+					}),
+				);
+				return;
+			} catch (e) {
+				ws.send(
+					JSON.stringify({
+						type: 'Error',
+						action: 'error',
+						data: {
+							message: 'Please pass JSON to server',
+						},
+					}),
+				);
+			}
+		},
 		async close(ws) {},
 		async drain(ws) {},
 	},
