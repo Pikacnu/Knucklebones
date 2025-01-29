@@ -12,6 +12,22 @@ import {
 import { TokenAliveTime } from '../../config';
 import { RoomRoute } from '../apis/room';
 
+const createMessage = (
+	data: {
+		type: string;
+		action: string;
+		data?: { [key: string]: any };
+	},
+	status: boolean,
+	message: string,
+) => {
+	return JSON.stringify({
+		type: data.type,
+		action: data.action,
+		data: { [data.action]: status, message: message },
+	});
+};
+
 export const wsToken = async (ws: ServerWebSocket<unknown>, data: any) => {
 	if (data.action === 'validate') {
 		const tokenInfo = db
@@ -89,22 +105,7 @@ export const wsToken = async (ws: ServerWebSocket<unknown>, data: any) => {
 			}),
 		);
 	}
-};
-
-const createMessage = (
-	data: {
-		type: string;
-		action: string;
-		data?: { [key: string]: any };
-	},
-	status: boolean,
-	message: string,
-) => {
-	return JSON.stringify({
-		type: data.type,
-		action: data.action,
-		data: { [data.action]: status, message: message },
-	});
+	ws.send(createMessage(data, false, 'Invalid action'));
 };
 
 export const wsRoom = async (ws: ServerWebSocket<unknown>, data: any) => {
